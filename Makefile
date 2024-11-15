@@ -3,27 +3,42 @@
 #################################################################################
 
 PROJECT_NAME = walle
-PYTHON_VERSION = 3.9.1
+PYTHON_VERSION = 3.11.9
 PYTHON_INTERPRETER = python
 
 #################################################################################
 # COMMANDS                                                                      #
 #################################################################################
 ## Set up python interpreter environment
+## python3.11.9 is not via pyenv
 .PHONY: create_environment
 create_environment:
-	python3.9 -m pip install virtualenv
+	python3.11 -m pip install virtualenv
 	virtualenv venv
 	source venv/bin/activate && \
-	python3.9 -m pip install --upgrade pip setuptools wheel && \
-	python3.9 -m pip install -e ".[dev]"
+	venv/bin/python -m pip install --upgrade pip setuptools wheel && \
+	venv/bin/pip install -r requirements.txt
+	venv/bin/pip install notebook
 
-## Install Python Dependencies
-.PHONY: requirements
-requirements:
+.PHONY: tool_ollama .FORCE
+tool_ollama:
+	@export OLLAMA_BASE_URL="http://localhost:11434" && ollama serve
+
+# aka memGPT
+# Assuming tool_ollama has been executed in the other window
+.PHONY: tool_letta_backend
+tool_letta_backend:
+	@export OLLAMA_BASE_URL="http://localhost:11434" && \
+	cd /Users/chang/Documents/dev/git/project/walle && \
 	source venv/bin/activate && \
-	$(PYTHON_INTERPRETER) -m pip install -U pip  && \
-	$(PYTHON_INTERPRETER) -m pip install -r requirements.txt
+	letta server
+
+.PHONY: tool_letta_agent
+tool_letta_agent:
+	@export OLLAMA_BASE_URL="http://localhost:11434" && \
+		cd /Users/chang/Documents/dev/git/project/walle && \
+    	source venv/bin/activate && \
+    	letta run
 
 
 ## Delete all compiled Python files
