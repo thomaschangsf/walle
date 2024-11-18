@@ -13,12 +13,14 @@ PYTHON_INTERPRETER = python
 ## python3.11.9 is not via pyenv
 .PHONY: create_environment
 create_environment:
-	python3.11 -m pip install virtualenv
-	virtualenv venv
+	python3.11 -m pip install virtualenv && \
+	pip3 install --upgrade pip && \
+	virtualenv venv && \
 	source venv/bin/activate && \
-	venv/bin/python -m pip install --upgrade pip setuptools wheel && \
-	venv/bin/pip install -r requirements.txt
-	venv/bin/pip install notebook
+	venv/bin/python3 -m pip install --upgrade pip setuptools wheel && \
+	venv/bin/pip3 install -r requirements.txt && \
+	venv/bin/pip3 install letta && \
+	venv/bin/pip3 install notebook
 
 .PHONY: tool_ollama .FORCE
 tool_ollama:
@@ -40,6 +42,12 @@ tool_letta_agent:
     	source venv/bin/activate && \
     	letta run
 
+.PHONY: tool_notebook
+tool_notebook:
+	cd /Users/chang/Documents/dev/git/project/walle && \
+	source venv/bin/activate && \
+	venv/bin/jupyter notebook &
+
 
 ## Delete all compiled Python files
 .PHONY: clean
@@ -59,7 +67,7 @@ style:
 
 
 #################################################################################
-# PROJECT RULES                                                                 #
+# PROJECT RULES
 #################################################################################
 
 
